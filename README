@@ -1,0 +1,16 @@
+Followeb is a simple web application that allows you to follow 
+a set of websites you want, storing a copy of these
+every time that they are changed.
+
+To help us, please create a virtual environment
+with python-virtualenv and install the packages list
+in requeriments.pip:
+
+	virtualenv --no-site-packages followeb
+	source followeb/bin/active
+	pip install -r requeriments.pip
+
+Followeb uses Django, so you should read the Django documentation 
+to contribute to the project: 
+
+	https://www.djangoproject.com/
