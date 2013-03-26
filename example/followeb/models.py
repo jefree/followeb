@@ -6,7 +6,7 @@ class Resource(models.Model):
 	
 	title = models.CharField(max_length=50)
 	description = models.CharField(max_length=300, blank=True)
-	url = models.URLField(editable=False)
+	url = models.URLField()
 	
 	def __unicode__(self):
 		return self.title
@@ -14,9 +14,9 @@ class Resource(models.Model):
 class ResourceVersion(models.Model):
 	
 	resource = models.ForeignKey(Resource)
-	version = models.IntegerField(editable=False)
-	date = models.DateTimeField(blank=True, editable=False)
-	resource_file = models.FileField(upload_to='./file_history/', editable=False)
+	version = models.IntegerField()
+	date = models.DateTimeField()
+	resource_file = models.FileField(upload_to='./file_history/')
 	
 	def __unicode__(self):
 		return self.resource.title+'_'+str(self.version) 
