@@ -1,6 +1,12 @@
 # Create your views here.
 
-from django.http import HttpResponse
+from django.shortcuts import render
 
 def index(request):
-	return HttpResponse("This is the page index")
+	
+	context = {'image':'add.png', 'title':'INDEX VIEW'}
+	
+	return render(request,  'followeb/image-template.html', context,)
+	
+	
+	
