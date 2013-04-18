@@ -1,12 +1,14 @@
 {% extends "followeb/base.html" %}
 
+{%load staticfiles%}
+
 {% block title %} Subscribe {% endblock%}
 {% block subtitle %} Add New Subscription {% endblock%}
 
 {% block content%} 
-		
-	<input type='text' class='input-xxlarge' name='url'/>
-	<input type='button' class='btn btn-inverse' name='search' value='Buscar'/>
+
+	<input type='text' class='input-xxlarge' placeholder='Type a URL ...' id='url-text' />
+	<input type='button' class='btn btn-inverse' name='search' value='Buscar' id='preview-button'/>
 	
 	<div class='row-fluid'>
 		<div class='span12 text-center'>
@@ -26,5 +28,15 @@
 		</div>
 	</div>
 
+
+{% endblock %}
+
+{%block javascript%}
+
+<script src= {% static "followeb/js/preview.js" %}> </script>
+
+<script> 
+	init();
+</script>
 
 {% endblock %}
