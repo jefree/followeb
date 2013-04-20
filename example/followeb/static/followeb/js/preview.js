@@ -10,6 +10,19 @@ function getPreview(){
 	request_url = document.getElementById('url-text').value;
 
 	$.get("/followeb/tasks/preview/"+request_url+"/", function(data){
-		alert(data);	
+
+		var info = eval(data);
+
+		if( ! info["error"]){
+
+			$('#title-text').text(info["title"]);
+			$('#description-text').text(info["description"]);
+			$('#image-preview').attr('src', info["image"]);
+
+		}else{
+
+			alert("Invalid URL");
+
+		}
 	});
 }
