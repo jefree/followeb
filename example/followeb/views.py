@@ -17,11 +17,11 @@ def getPreviewView(request, url):
 
 	try:
 		
-		r = requests.get(url)
+		request = requests.get(url)
 
-		if r:
+		if request:
 
-			html = bs4.BeautifulSoup(r.text)
+			html = bs4.BeautifulSoup(request.text)
 
 			#get title
 			info['title'] = html.find('title').text
