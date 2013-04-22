@@ -1,0 +1,44 @@
+{% extends "followeb/base.html" %}
+
+{%load staticfiles%}
+
+{% block title %} Subscribe {% endblock%}
+{% block subtitle %} Add New Subscription {% endblock%}
+
+{% block content%} 
+
+	<div class="form-horizontal">
+		<input type='text' class='input-xxlarge' placeholder='Type a URL ...' id='url-text' />
+		<input type='button' class='btn btn-inverse' name='search' value='Buscar' id='preview-button'/>
+	</div>
+
+	<div class='row-fluid'>
+		<div class='span12 text-center'>
+			<h3 id='title-text'></h3>
+		</div>
+	</div>
+
+	<div class='row-fluid'>
+		<div class='span2'>
+			<img src='' class='img-rounded' id='image-preview'>
+		</div>
+
+		<div class='span8'>
+			<p id='description-text'>
+				
+			</p>
+		</div>
+	</div>
+
+
+{% endblock %}
+
+{%block javascript%}
+
+<script src= {% static "followeb/js/preview.js" %}> </script>
+
+<script> 
+	init();
+</script>
+
+{% endblock %}

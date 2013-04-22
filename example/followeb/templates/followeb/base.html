@@ -1,3 +1,6 @@
+
+<!DOCTYPE HTML>
+
 <html>
 	
 	{%load staticfiles%}
@@ -8,7 +11,7 @@
 		<link href="{% static "followeb/css/bootstrap.min.css" %}" rel="stylesheet" media="screen"/>
 	</head>
 	
-	<body>		
+	<body>	
 		<div class="container text-center">
 			
 			<div class="page-header">
@@ -22,7 +25,13 @@
 			</div>
 			
 			<!-- script Section -->
-			<script src={% static "followeb/js/bootstrap.min.js" %}/>
-	
+
+			<script src={% static "followeb/js/jquery-1.9.1.min.js" %}></script>
+			<script src={% static "followeb/js/bootstrap.min.js" %}></script>
+
+			{%block javascript%}
+			{%endblock%}
+
+		</div>
 	</body>
 </html>
