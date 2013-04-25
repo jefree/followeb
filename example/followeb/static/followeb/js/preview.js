@@ -1,13 +1,26 @@
 
 function init(){
 
-	button = document.getElementById('preview-button');
-	button.onclick = getPreview;
+	$('#preview-button').click(getPreview);
+	$('#save-button').hide();
+
+	$('#url-text').keyup(function(e){
+
+		if (e.keyCode == 13){
+			getPreview();
+		}
+	});
 }
 
 function getPreview(){
 	
-	request_url = document.getElementById('url-text').value;
+	if ( ! $('#save-button').is(':visible') ){
+		$('#save-button').show();
+	}
+
+	request_url = $('#url-text').val();
+
+	alert(request_url);
 
 	$.get("/followeb/tasks/preview/"+request_url+"/", function(data){
 

@@ -18,7 +18,7 @@
 		</div>
 	</div>
 
-	<div class='row-fluid'>
+	<div class='row-fluid'>	
 		<div class='span2'>
 			<img src='' class='img-rounded' id='image-preview'>
 		</div>
@@ -30,6 +30,29 @@
 		</div>
 	</div>
 
+	<div>
+		<input type='button' class='btn btn-primary' value='Subscribe' href='#subscribe-modal' data-toggle='modal' id='save-button'>
+	</div>
+
+
+	<div class="modal hide fade" id="subscribe-modal">
+	  <div class="modal-header">
+	    <a class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
+	    <h3>Subscribe</h3>
+	  </div>
+
+	  	<form action='/algo' method='POST'>
+		  <div class="modal-body">
+		    
+		  		<label>Title</label> <input type='text' class='input-xlarge' placeholder='Title...' id='title-text'/>
+		  		<label>Description<label><textarea rows='3'></textarea>
+		  </div>
+		  <div class="modal-footer">
+		    <a href="#" class="btn" data-dismiss="modal" >Close</a>
+		    <button href="#" type='submit' class="btn btn-primary" >Subscribe</a>
+		  </div>
+		</form>
+	</div>
 
 {% endblock %}
 
