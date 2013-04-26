@@ -66,7 +66,8 @@ def getPreviewView(request, url):
 def index(request):
 	
 	context = {'image':'index.png', 'title':'INDEX VIEW'}
-	return render(request,  'followeb/image-template.html', context)
+	context['lista']=Resource.objects.all()
+	return render(request,  'followeb/index.html', context)
 	
 def add(request):
 	
@@ -76,9 +77,8 @@ def add(request):
 """
 @return: This function return a web site with the information of the consultation
 """
-def details(request):
-	
-	context = {'image':'details.png', 'title':'DETAILS VIEW'}
-	context['lista']=ResourceVersion.objects.all()[:5]#It filtered the 5 firts dates in the table
-	#print context['lista'][0]
+def history(request,res_id):
+	context = {}
+	#Get the version list for this resource
+	context['lista']=Resource.objects.get(id=res_id).resourceversion_set.all()
 	return render(request,  'followeb/history.html', context)

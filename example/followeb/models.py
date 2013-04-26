@@ -11,7 +11,7 @@ class Resource(models.Model):
 	def __unicode__(self):
 		return self.title
 
-class ResourceVersion(models.Model):
+class ResourceVersion(models.Model):		
 	
 	resource = models.ForeignKey(Resource)
 	version = models.IntegerField()
