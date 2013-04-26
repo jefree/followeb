@@ -1,15 +1,46 @@
 # Create your views here.
 
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse,HttpResponseBadRequest
+from django.shortcuts import render, redirect
+from models import Resource, ResourceVersion
 
 import requests
-import bs4
+from bs4 import BeautifulSoup
 import json
+from datetime import datetime
 import os
+
+def addSubscriptionView(request):
+	
+	if request.method == 'POST':
+		
+		url =  request.POST['url']
+		title = request.POST['title']
+		description = request.POST['description']
+
+		os.makedirs('./followeb/static/followeb/file_history/'+title)
+		file_name = './followeb/static/followeb/file_history/'+title+'/version_1.html' 
+
+		res_file = open(file_name, 'w')
+		res_file.write(requests.get(url).text.encode("UTF-8"))
+		res_file.close()
+
+		resource = Resource(url=url, title=title, description=description)
+		resource.save()
+
+		version = ResourceVersion(resource=resource, version=1, date=datetime.now(), resource_file=file_name)
+		version.save()
+
+		return redirect('/followeb/')
+
+	return HttpResponseBadRequest('Bad Request')
+	
 
 def getPreviewView(request, url):
 	
+	if not request.is_ajax():
+		return HttpResponseBadRequest('Bad Request')
+
 	info = {'error':False,
 			'title':'',
 			'description':'',
@@ -21,7 +52,7 @@ def getPreviewView(request, url):
 
 		if request:
 
-			html = bs4.BeautifulSoup(request.text)
+			html = BeautifulSoup(request.text)
 
 			#get title
 			info['title'] = html.find('title').text
@@ -64,17 +95,14 @@ def getPreviewView(request, url):
 	return HttpResponse('('+json.dumps(info)+')')
 
 def index(request):
-	
 	context = {'image':'index.png', 'title':'INDEX VIEW'}
 	return render(request,  'followeb/image-template.html', context)
 	
 def add(request):
-	
 	context = {'image':'add.png', 'title':'ADD VIEW'}
 	return render(request,  'followeb/add.html', context)
 
 def details(request):
-	
 	context = {'image':'details.png', 'title':'DETAILS VIEW'}
 	return render(request,  'followeb/image-template.html', context)
 	

@@ -1,7 +1,10 @@
 
 function init(){
 
-	$('#preview-button').click(getPreview);
+	//clean forms
+	$('#url-text').val('');
+	$('#title').val('');
+	$('#description').val('');
 	$('#save-button').hide();
 
 	$('#url-text').keyup(function(e){
@@ -13,14 +16,8 @@ function init(){
 }
 
 function getPreview(){
-	
-	if ( ! $('#save-button').is(':visible') ){
-		$('#save-button').show();
-	}
 
 	request_url = $('#url-text').val();
-
-	alert(request_url);
 
 	$.get("/followeb/tasks/preview/"+request_url+"/", function(data){
 
@@ -32,10 +29,28 @@ function getPreview(){
 			$('#description-text').text(info["description"]);
 			$('#image-preview').attr('src', info["image"]);
 
+			$('#url').val(request_url);
+
+			//show subscribe button
+			if ( ! $('#save-button').is(':visible') ){
+				$('#save-button').show();
+			}		
+
 		}else{
 
 			alert("Invalid URL");
 
 		}
 	});
+}
+
+function sendSubscribe(){
+
+	if( $('#title').val() == '' ){
+
+		alert('Please set a title for your subscription');
+		return;
+	}
+
+	$('#formSubscribe').submit();
 }
