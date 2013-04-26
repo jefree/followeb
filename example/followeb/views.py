@@ -1,8 +1,8 @@
 # Create your views here.
 
+from followeb.models import *
 from django.http import HttpResponse
-from django.shortcuts import render
-
+from django.shortcuts import render	
 import requests
 import bs4
 import json
@@ -73,9 +73,12 @@ def add(request):
 	context = {'image':'add.png', 'title':'ADD VIEW'}
 	return render(request,  'followeb/add.html', context)
 
+"""
+@return: This function return a web site with the information of the consultation
+"""
 def details(request):
 	
 	context = {'image':'details.png', 'title':'DETAILS VIEW'}
-	return render(request,  'followeb/image-template.html', context)
-	
-	
+	context['lista']=ResourceVersion.objects.all()[:5]#It filtered the 5 firts dates in the table
+	#print context['lista'][0]
+	return render(request,  'followeb/history.html', context)
