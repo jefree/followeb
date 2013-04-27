@@ -4,11 +4,11 @@ from django.http import HttpResponse,HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from models import Resource, ResourceVersion
 
-import requests
-from bs4 import BeautifulSoup
 import json
+import requests
 from datetime import datetime
 import os
+import tasks
 
 def addSubscriptionView(request):
 	
@@ -18,14 +18,16 @@ def addSubscriptionView(request):
 		title = request.POST['title']
 		description = request.POST['description']
 
-		os.makedirs('./followeb/static/followeb/file_history/'+title)
-		file_name = './followeb/static/followeb/file_history/'+title+'/version_1.html' 
+		os.makedirs('followeb/static/followeb/file_history/'+title)
+		file_name = 'followeb/static/followeb/file_history/'+title+'/version_1.html' 
+
+		html_request = requests.get(url)
 
 		res_file = open(file_name, 'w')
-		res_file.write(requests.get(url).text.encode("UTF-8"))
+		res_file.write(html_request.text.encode("UTF-8"))
 		res_file.close()
 
-		resource = Resource(url=url, title=title, description=description)
+		resource = Resource(url=html_request.url, title=title, description=description)
 		resource.save()
 
 		version = ResourceVersion(resource=resource, version=1, date=datetime.now(), resource_file=file_name)
@@ -34,65 +36,31 @@ def addSubscriptionView(request):
 		return redirect('/followeb/')
 
 	return HttpResponseBadRequest('Bad Request')
-	
 
-def getPreviewView(request, url):
-	
-	if not request.is_ajax():
-		return HttpResponseBadRequest('Bad Request')
+def performTaskView(request, url='', title=''):
 
-	info = {'error':False,
-			'title':'',
-			'description':'',
-			'image':''}
+    if not request.is_ajax():
+        return HttpResponseBadRequest('Bad Request')
 
-	try:
-		
-		request = requests.get(url)
+    info = dict()
 
-		if request:
+    if not url == '' :   #get preview
 
-			html = BeautifulSoup(request.text)
+        preview = tasks.genPreview(url)
+        info.update(preview)
 
-			#get title
-			info['title'] = html.find('title').text
-			
-			#get description
-			meta = html.find(attrs={"name":"description"})
+        #validate that not exists another subscription with same url
+        if len( Resource.objects.filter(url=info['url']) ) != 0:
+            info['error'] = True
+            info['error-message'] = 'This Subscription already exists.'
+    	
+            
+    elif not title == '':  #check repeated title
 
-			if meta:
-				info['description'] = meta['content']
+        if len(Resource.objects.filter(title=title)) > 0:
+            info['error'] = True
 
-			#get image
-			img_tags = html.findAll("meta", property='og:image')
-			key_src = 'content'
-
-			if not img_tags:
-				img_tags = html.findAll("img")
-				key_src='src'
-
-			if img_tags:
-
-				for img in img_tags:
-
-					src = img[key_src]
-
-					if src.count('gif') == 0:
-
-						if src[:2] == '..':
-							info['image'] = url + src
-						else:
-							info['image'] = src
-
-						break
-						
-	except Exception as e:
-
-		#print 'Exception:', e
-
-		info['error'] = True
-
-	return HttpResponse('('+json.dumps(info)+')')
+    return HttpResponse('('+json.dumps(info)+')')
 
 def index(request):
 	context = {'image':'index.png', 'title':'INDEX VIEW'}
