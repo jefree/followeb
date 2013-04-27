@@ -36,23 +36,35 @@
 	  <div class="modal-header">
 	    <a class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
 	    <h3>Subscribe</h3>
-	  </div>
+		</div>
 
-  	<form id='formSubscribe' action='subscribe/' method='POST'>
-  		{% csrf_token %}
+  		<form id='formSubscribe' action='subscribe/' method='POST'>
+  			{% csrf_token %}
 
-  		<input type='hidden' value='' id='url' name='url'/>
+  			<input type='hidden' value='' id='url' name='url'/>
 
-	 	<div class="modal-body">
-	  	  	<label>Title</label> <input type='text' class='input-xlarge' placeholder='Title...' id='title' name='title'/>
-	  		<label>Description<label><textarea rows='3' name='description' id='description'></textarea>
-	 	 </div>
+	 		<div class="modal-body">
+	  	  		<label>Title</label> <input type='text' class='input-xlarge' placeholder='Title...' id='title' name='title'/>
+	  			<label>Description<label><textarea rows='3' name='description' id='description'></textarea>
+	 	 	</div>
 
-	  <div class="modal-footer">
-	  	<a href="#" class="btn" data-dismiss="modal" >Close</a>
-	    <input type='button' href="#" class="btn btn-primary" onclick="sendSubscribe()" value="Subscribe"/>
-	  </div>
-	</form>
+	  		<div class="modal-footer">
+	  			<a href="#" class="btn" data-dismiss="modal" >Close</a>
+	    		<input type='button' href="#" class="btn btn-primary" onclick="sendSubscribe()" value="Subscribe"/>
+	  		</div>
+
+	  		<div class="alert alert-error hide" id='error-message-div-modal'>
+				<button class="close" type="button" onclick="hideAlert('error-message-div-modal')">x</button>
+				<p id="error-message-p-modal" ></p>
+			</div>
+		</form>
+	</div>
+
+	<div class="alert alert-error hide" id='error-message-div'>
+		<button class="close" type="button" onclick="hideAlert('error-message-div')">x</button>
+		<p id="error-message-p"></p>
+	</div>
+
 
 {% endblock %}
 

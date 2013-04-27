@@ -38,19 +38,42 @@ function getPreview(){
 
 		}else{
 
-			alert("Invalid URL");
+			$('#title-text').text('');
+			$('#description-text').text('');
+			$('#image-preview').attr('src', '');
+			$('#save-button').hide();
 
+			$('#error-message-p').text(info['error-message']);
+			$('#error-message-div').show();
 		}
 	});
 }
+
 
 function sendSubscribe(){
 
 	if( $('#title').val() == '' ){
 
-		alert('Please set a title for your subscription');
+		$('#error-message-p-modal').text('Please set title for this subscription');
+		$('#error-message-div-modal').show();
 		return;
 	}
 
-	$('#formSubscribe').submit();
+	$.get("/followeb/tasks/checktitle/"+$('#title').val()+"/", function(data){
+
+		var info = eval(data);
+
+
+		if (info['error']) {
+			$('#error-message-p-modal').text('This title is already in use');
+			$('#error-message-div-modal').show();			
+		}else{
+			$('#formSubscribe').submit();
+		}	
+	});
+}
+
+function hideAlert(alert){
+
+	$('#'+alert).hide()
 }
