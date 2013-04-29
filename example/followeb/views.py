@@ -5,72 +5,82 @@ from django.http import HttpResponse
 from django.shortcuts import render	
 import requests
 import bs4
+
+from django.http import HttpResponse,HttpResponseBadRequest
+from django.shortcuts import render, redirect
+from models import Resource, ResourceVersion
+
 import json
+import requests
+from datetime import datetime
 import os
+import tasks
 
-def getPreviewView(request, url):
+"""
+This function add a subscription new in database
+@return: This function return only if request return a error
+"""
+def addSubscriptionView(request):
 	
-	info = {'error':False,
-			'title':'',
-			'description':'',
-			'image':''}
-
-	try:
+	if request.method == 'POST':
 		
-		request = requests.get(url)
+		url =  request.POST['url']
+		title = request.POST['title']
+		description = request.POST['description']
 
-		if request:
+		os.makedirs('followeb/static/followeb/file_history/'+title)
+		file_name = 'followeb/static/followeb/file_history/'+title+'/version_1.html' 
 
-			html = bs4.BeautifulSoup(request.text)
+		html_request = requests.get(url)
 
-			#get title
-			info['title'] = html.find('title').text
-			
-			#get description
-			meta = html.find(attrs={"name":"description"})
+		res_file = open(file_name, 'w')
+		res_file.write(html_request.text.encode("UTF-8"))
+		res_file.close()
 
-			if meta:
-				info['description'] = meta['content']
+		resource = Resource(url=html_request.url, title=title, description=description)
+		resource.save()
 
-			#get image
-			img_tags = html.findAll("meta", property='og:image')
-			key_src = 'content'
+		version = ResourceVersion(resource=resource, version=1, date=datetime.now(), resource_file=file_name)
+		version.save()
 
-			if not img_tags:
-				img_tags = html.findAll("img")
-				key_src='src'
+		return redirect('/followeb/')
 
-			if img_tags:
+	return HttpResponseBadRequest('Bad Request')
 
-				for img in img_tags:
+def performTaskView(request, url='', title=''):
 
-					src = img[key_src]
+    if not request.is_ajax():
+        return HttpResponseBadRequest('Bad Request')
 
-					if src.count('gif') == 0:
+    info = dict()
 
-						if src[:2] == '..':
-							info['image'] = url + src
-						else:
-							info['image'] = src
+    if not url == '' :   #get preview
 
-						break
-						
-	except Exception as e:
+        preview = tasks.genPreview(url)#recibe url y trae el preveiw
+        info.update(preview)
+        if not info['error']:
+        	#validate that not exists another subscription with same url
+            if len( Resource.objects.filter(url=info['url']) ) != 0:
+                info['error'] = True
+                info['error-message'] = 'This Subscription already exists.'
+        else:
+           	info['error'] = True
+           	info['error-message'] = 'This url not found.'
+    	
+            
+    elif not title == '':  #check repeated title
 
-		#print 'Exception:', e
+        if len(Resource.objects.filter(title=title)) > 0:
+            info['error'] = True
 
-		info['error'] = True
-
-	return HttpResponse('('+json.dumps(info)+')')
+    return HttpResponse('('+json.dumps(info)+')')
 
 def index(request):
-	
 	context = {'image':'index.png', 'title':'INDEX VIEW'}
 	context['lista']=Resource.objects.all()
 	return render(request,  'followeb/index.html', context)
 	
 def add(request):
-	
 	context = {'image':'add.png', 'title':'ADD VIEW'}
 	return render(request,  'followeb/add.html', context)
 
