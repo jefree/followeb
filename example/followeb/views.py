@@ -80,5 +80,5 @@ def add(request):
 def history(request,res_id):
 	context = {}
 	#Get the version list for this resource
-	context['lista']=Resource.objects.get(id=res_id).resourceversion_set.all()
+	context['list_history']=Resource.objects.get(id=res_id).resourceversion_set.all()
 	return render(request,  'followeb/history.html', context)
