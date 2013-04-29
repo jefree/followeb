@@ -47,16 +47,20 @@ def addSubscriptionView(request):
 
 	return HttpResponseBadRequest('Bad Request')
 
+"""
+This function validate the URL respective for input in database 
+@return: a message saying if the operation was successful
+"""
 def performTaskView(request, url='', title=''):
 
     if not request.is_ajax():
         return HttpResponseBadRequest('Bad Request')
 
     info = dict()
-
+    
     if not url == '' :   #get preview
 
-        preview = tasks.genPreview(url)#recibe url y trae el preveiw
+        preview = tasks.genPreview(url)#Receives URL and brings the preveiw
         info.update(preview)
         if not info['error']:
         	#validate that not exists another subscription with same url
@@ -75,11 +79,16 @@ def performTaskView(request, url='', title=''):
 
     return HttpResponse('('+json.dumps(info)+')')
 
+"""
+@return: This function return the page index in the web site
+"""
 def index(request):
 	context = {'image':'index.png', 'title':'INDEX VIEW'}
 	context['lista']=Resource.objects.all()
 	return render(request,  'followeb/index.html', context)
-	
+"""
+@return: TIns function return the page add 
+"""
 def add(request):
 	context = {'image':'add.png', 'title':'ADD VIEW'}
 	return render(request,  'followeb/add.html', context)
