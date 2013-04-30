@@ -57,7 +57,7 @@ def performTaskView(request, url='', title=''):
         return HttpResponseBadRequest('Bad Request')
 
     info = dict()
-
+    
     if not url == '' :   #get preview
 
         preview = tasks.genPreview(url)#Receives URL and brings the preveiw
