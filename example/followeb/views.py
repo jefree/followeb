@@ -1,5 +1,11 @@
 # Create your views here.
 
+from followeb.models import *
+from django.http import HttpResponse
+from django.shortcuts import render	
+import requests
+import bs4
+
 from django.http import HttpResponse,HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from models import Resource, ResourceVersion
@@ -10,6 +16,10 @@ from datetime import datetime
 import os
 import tasks
 
+"""
+This function add a subscription new in database
+@return: This function return only if request return a error
+"""
 def addSubscriptionView(request):
 	
 	if request.method == 'POST':
@@ -37,22 +47,29 @@ def addSubscriptionView(request):
 
 	return HttpResponseBadRequest('Bad Request')
 
+"""
+This function validate the URL respective for input in database 
+@return: a message saying if the operation was successful
+"""
 def performTaskView(request, url='', title=''):
 
     if not request.is_ajax():
         return HttpResponseBadRequest('Bad Request')
 
     info = dict()
-
+    
     if not url == '' :   #get preview
 
-        preview = tasks.genPreview(url)
+        preview = tasks.genPreview(url)#Receives URL and brings the preveiw
         info.update(preview)
-
-        #validate that not exists another subscription with same url
-        if len( Resource.objects.filter(url=info['url']) ) != 0:
-            info['error'] = True
-            info['error-message'] = 'This Subscription already exists.'
+        if not info['error']:
+        	#validate that not exists another subscription with same url
+            if len( Resource.objects.filter(url=info['url']) ) != 0:
+                info['error'] = True
+                info['error-message'] = 'This Subscription already exists.'
+        else:
+           	info['error'] = True
+           	info['error-message'] = 'This url not found.'
     	
             
     elif not title == '':  #check repeated title
@@ -62,16 +79,25 @@ def performTaskView(request, url='', title=''):
 
     return HttpResponse('('+json.dumps(info)+')')
 
+"""
+@return: This function return the page index in the web site
+"""
 def index(request):
 	context = {'image':'index.png', 'title':'INDEX VIEW'}
-	return render(request,  'followeb/image-template.html', context)
-	
+	context['list_index']=Resource.objects.all()
+	return render(request,  'followeb/index.html', context)
+"""
+@return: TIns function return the page add 
+"""
 def add(request):
 	context = {'image':'add.png', 'title':'ADD VIEW'}
 	return render(request,  'followeb/add.html', context)
 
-def details(request):
-	context = {'image':'details.png', 'title':'DETAILS VIEW'}
-	return render(request,  'followeb/image-template.html', context)
-	
-	
+"""
+@return: This function return a web site with the information of the consultation
+"""
+def history(request,res_id):
+	context = {}
+	#Get the version list for this resource
+	context['list_history']=Resource.objects.get(id=res_id).resourceversion_set.all()
+	return render(request,  'followeb/history.html', context)
