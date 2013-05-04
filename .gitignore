@@ -1,3 +1,4 @@
 *.pyc
 *.db
-file_history/
+history_file/
+celerybeat-schedule
