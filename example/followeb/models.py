@@ -16,7 +16,7 @@ class ResourceVersion(models.Model):
 	resource = models.ForeignKey(Resource)
 	version = models.IntegerField()
 	date = models.DateTimeField()
-	resource_file = models.FileField(upload_to='./followeb/static/followeb/file_history')
+	resource_file = models.FileField(upload_to='./followeb/static/followeb/history_file')
 	
 	def __unicode__(self):
 		return self.resource.title+'_'+str(self.version) 
