@@ -27,22 +27,16 @@ def addSubscriptionView(request):
 		url =  request.POST['url']
 		title = request.POST['title']
 		description = request.POST['description']
-
-		os.makedirs('followeb/static/followeb/file_history/'+title)
-		file_name = 'followeb/static/followeb/file_history/'+title+'/version_1.html' 
-
+		
 		html_request = requests.get(url)
+		url=html_request.url
+		code_html = html_request.text
 
-		res_file = open(file_name, 'w')
-		res_file.write(html_request.text.encode("UTF-8"))
-		res_file.close()
-
-		resource = Resource(url=html_request.url, title=title, description=description)
+		resource = Resource(url=url, title=title, description=description)
 		resource.save()
 
-		version = ResourceVersion(resource=resource, version=1, date=datetime.now(), resource_file=file_name)
-		version.save()
-
+		tasks.create_new_version(resource, code_html ,1)
+		
 		return redirect('/followeb/')
 
 	return HttpResponseBadRequest('Bad Request')

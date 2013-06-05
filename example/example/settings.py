@@ -127,6 +127,7 @@ INSTALLED_APPS = (
     'followeb',
     # for development:
     'django_extensions',
+    'djcelery',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -157,3 +158,10 @@ LOGGING = {
         },
     }
 }
+
+#celery
+
+import djcelery
+djcelery.setup_loader()
+
+BROKER_URL = 'redis://localhost:6379/0'
